@@ -1,54 +1,35 @@
-// Function to calculate Euclidean distance
-WITH function() {
-  RETURN sqrt(sum((a.rating - b.rating)^2 for a in reviews1
-               for b in reviews2
-               where a.areaId = b.areaId))
-} AS euclideanDistance,
-// Function to calculate Cosine similarity
-function() {
-  RETURN sum(a.rating * b.rating for a in reviews1
-             for b in reviews2
-             where a.areaId = b.areaId) /
-         (sqrt(sum(a.rating^2 for a in reviews1)) *
-          sqrt(sum(b.rating^2 for b in reviews2)))
-} AS cosineSimilarity
+// Calculate Euclidean distance and Cosine similarity
+MATCH (u1:User {country: 'France'})-[r1:review]->(a:Area_4)<-[r2:review]-(u2:User {country: 'France'})
+WHERE u1.id < u2.id
+WITH u1, u2, a, r1.rating AS rating1, r2.rating AS rating2
+WITH u1, u2, 
+     COLLECT({areaId: a.gid, rating1: rating1, rating2: rating2}) AS commonReviews,
+     SQRT(SUM((rating1 - rating2)^2)) AS euclideanDistance,
+     SUM(rating1 * rating2) / (SQRT(SUM(rating1^2)) * SQRT(SUM(rating2^2))) AS cosineSimilarity
 
 // For top reviewers by total reviews
-MATCH (u:User {country: 'France'})-[r:review]->(a:Area_4)
-WITH u, SUM(r.NB) AS totalReviews
-ORDER BY totalReviews DESC
-LIMIT 2
-WITH COLLECT(u) AS topUsers
-
-MATCH (u1:User) WHERE u1 IN topUsers
-MATCH (u2:User) WHERE u2 IN topUsers AND u1.id < u2.id
-MATCH (u1)-[r1:review]->(a:Area_4)
-MATCH (u2)-[r2:review]->(a:Area_4)
-WITH u1, u2, 
-     COLLECT({areaId: a.gid, rating: r1.rating}) AS reviews1,
-     COLLECT({areaId: a.gid, rating: r2.rating}) AS reviews2,
-     euclideanDistance, cosineSimilarity
+WITH u1, u2, euclideanDistance, cosineSimilarity,
+     SIZE([(u1)-[:review]->() | 1]) AS totalReviews1,
+     SIZE([(u2)-[:review]->() | 1]) AS totalReviews2
+ORDER BY totalReviews1 + totalReviews2 DESC
+LIMIT 1
 RETURN u1.id AS user1Id, u2.id AS user2Id,
-       euclideanDistance() AS euclideanDistance,
-       cosineSimilarity() AS cosineSimilarity
+       euclideanDistance AS euclideanDistance,
+       cosineSimilarity AS cosineSimilarity
 
 UNION
 
 // For top reviewers by distinct areas
-MATCH (u:User {country: 'France'})-[r:review]->(a:Area_4)
-WITH u, COUNT(DISTINCT a) AS distinctAreas
-ORDER BY distinctAreas DESC
-LIMIT 2
-WITH COLLECT(u) AS topUsers
-
-MATCH (u1:User) WHERE u1 IN topUsers
-MATCH (u2:User) WHERE u2 IN topUsers AND u1.id < u2.id
-MATCH (u1)-[r1:review]->(a:Area_4)
-MATCH (u2)-[r2:review]->(a:Area_4)
+MATCH (u1:User {country: 'France'})-[r1:review]->(a:Area_4)<-[r2:review]-(u2:User {country: 'France'})
+WHERE u1.id < u2.id
+WITH u1, u2, a, r1.rating AS rating1, r2.rating AS rating2
 WITH u1, u2, 
-     COLLECT({areaId: a.gid, rating: r1.rating}) AS reviews1,
-     COLLECT({areaId: a.gid, rating: r2.rating}) AS reviews2,
-     euclideanDistance, cosineSimilarity
+     COLLECT({areaId: a.gid, rating1: rating1, rating2: rating2}) AS commonReviews,
+     SQRT(SUM((rating1 - rating2)^2)) AS euclideanDistance,
+     SUM(rating1 * rating2) / (SQRT(SUM(rating1^2)) * SQRT(SUM(rating2^2))) AS cosineSimilarity,
+     COUNT(DISTINCT a) AS distinctAreas
+ORDER BY distinctAreas DESC
+LIMIT 1
 RETURN u1.id AS user1Id, u2.id AS user2Id,
-       euclideanDistance() AS euclideanDistance,
-       cosineSimilarity() AS cosineSimilarity
+       euclideanDistance AS euclideanDistance,
+       cosineSimilarity AS cosineSimilarity
