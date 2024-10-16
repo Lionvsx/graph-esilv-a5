@@ -31,6 +31,3 @@ async function testConnection() {
 }
 
 testConnection();
-
-// Remember to close the driver when your application exits
-// process.on('exit', () => driver.close());
