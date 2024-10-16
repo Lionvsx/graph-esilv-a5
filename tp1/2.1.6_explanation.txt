@@ -1,0 +1,23 @@
+Explanation of differences:
+
+1. Euclidean Distance vs Cosine Similarity:
+   - Euclidean: Measures absolute difference in review counts.
+   - Cosine: Measures the angle between review vectors, focusing on proportional similarities.
+
+2. Between couples:
+   - Top reviewers by total: Likely have higher NB values, potentially leading to larger Euclidean distances.
+   - Top reviewers by distinct areas: Might have more evenly distributed reviews, possibly resulting in smaller Euclidean distances.
+
+3. Compared to Jaccard/Overlap:
+   - Euclidean and Cosine consider the number of reviews (NB), not just presence/absence.
+   - This can reveal similarities in review patterns that binary measures miss.
+
+4. Scale sensitivity:
+   - Euclidean is sensitive to the scale of NB, while Cosine is not.
+   - This might lead to larger differences in Euclidean distances between the two couples compared to Cosine similarities.
+
+5. Interpretation:
+   - Lower Euclidean distance indicates more similar review counts.
+   - Higher Cosine similarity indicates more similar review patterns, regardless of absolute counts.
+
+These metrics provide a more nuanced view of user similarity, considering both the areas reviewed and the intensity of reviews in each area.

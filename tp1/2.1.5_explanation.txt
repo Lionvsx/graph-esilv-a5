@@ -1,0 +1,17 @@
+The difference between Jaccard similarity and Overlap similarity:
+
+1. Denominator: Jaccard uses the size of the union of both sets, while Overlap uses the size of the smaller set.
+
+2. Range: Both range from 0 to 1, but Overlap will always be >= Jaccard.
+
+3. Interpretation: 
+   - Jaccard: Proportion of shared items among all unique items.
+   - Overlap: Proportion of shared items in the smaller set.
+
+4. Sensitivity: Overlap is less sensitive to size differences between sets.
+
+In the context of user reviews:
+- Jaccard gives a balanced view of similarity considering all areas reviewed by both users.
+- Overlap focuses on how much the user with fewer distinct reviews aligns with the other user.
+
+This can lead to higher similarity scores with Overlap, especially when one user has reviewed significantly more distinct areas than the other.

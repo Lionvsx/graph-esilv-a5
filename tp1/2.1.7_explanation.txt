@@ -1,0 +1,31 @@
+Explanation of differences when using ratings instead of NB:
+
+1. Scale difference:
+   - Ratings typically have a smaller range (e.g., 1-5) compared to NB (number of reviews).
+   - This leads to smaller Euclidean distances overall when using ratings.
+
+2. Interpretation:
+   - Euclidean distance now represents the difference in how users rate areas, not how often they review.
+   - Cosine similarity now shows how similarly users rate areas, regardless of the number of reviews.
+
+3. Sensitivity:
+   - Rating-based metrics are more sensitive to differences in user preferences and satisfaction.
+   - NB-based metrics are more indicative of travel patterns and review frequency.
+
+4. Between couples:
+   - Top reviewers by total: Might have more consistent rating patterns due to more experience.
+   - Top reviewers by distinct areas: Could show more varied ratings due to diverse experiences.
+
+5. Compared to NB-based metrics:
+   - Rating-based metrics might show different patterns of similarity.
+   - Users with similar travel patterns (NB) might have different rating behaviors, or vice versa.
+
+6. Potential biases:
+   - Rating-based metrics might be influenced by individual rating styles (e.g., some users always give high ratings).
+   - NB-based metrics are not affected by this but might be biased towards frequent travelers.
+
+7. Completeness of information:
+   - Rating-based metrics provide insight into user satisfaction and preferences.
+   - NB-based metrics give information about travel patterns and review habits.
+
+Using both NB and rating-based similarities provides a more comprehensive view of user similarity, capturing both behavior (frequency of reviews) and opinion (ratings given).
