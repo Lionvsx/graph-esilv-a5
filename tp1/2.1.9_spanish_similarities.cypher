@@ -1,4 +1,3 @@
- 
 MATCH (u1:User {country: 'Spain'})-[r1:review]->(a:Area_4)
 WHERE r1.NB >= 5
 WITH u1, COLLECT(DISTINCT a) AS areas1
@@ -10,5 +9,5 @@ WITH u1, u2, areas1, areas2,
      [x IN areas1 WHERE x IN areas2] AS intersection
 WITH u1, u2,
      SIZE(intersection)*1.0 / SIZE(areas1 + [x IN areas2 WHERE NOT x IN areas1]) AS jaccard,
-     SIZE(intersection)*1.0 / MIN(SIZE(areas1), SIZE(areas2)) AS overlap
+     SIZE(intersection)*1.0 / apoc.coll.min([SIZE(areas1), SIZE(areas2)]) AS overlap
 RETURN AVG(jaccard) AS avgJaccard, AVG(overlap) AS avgOverlap
