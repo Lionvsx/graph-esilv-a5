@@ -6,72 +6,157 @@ Ce rapport présente les résultats obtenus lors de l'analyse des graphes bi-par
 
 ---
 
-## 1. Similarity
+## 2.1 Similarity
 
-1.1 **Jaccard Similarity entre les deux utilisateurs français ayant laissé le plus de commentaires :**
+### 2.1.1 Les deux utilisateurs français ayant laissé le plus de commentaires
 
-```plaintext
-// Insérer ici les requêtes Neo4j utilisées pour calculer la similarité Jaccard.
+```cypher
+// Requête pour trouver les deux utilisateurs français avec le plus de commentaires
 ```
 
-- **Explication** : Cette requête permet de mesurer la similarité Jaccard entre deux utilisateurs sur les lieux touristiques qu'ils ont évalués.
+**Explication** : Cette requête identifie les deux utilisateurs français les plus actifs en termes de nombre total de commentaires.
 
 **Capture d'écran des résultats** :
-- ![Capture d'écran](path_to_screenshot)
+- ![Capture d'écran](path_to_screenshot_2.1.1)
 
 ---
 
-1.2 **Euclidean et Cosine Similarities :**
+### 2.1.2 Similarité de Jaccard entre les zones distinctes
 
-```plaintext
-// Insérer ici les requêtes pour les similarités Euclidienne et cosinus.
+```cypher
+// Requête pour calculer la similarité de Jaccard entre les zones distinctes des deux utilisateurs
 ```
 
-- **Explication** : Ces deux métriques sont utilisées pour comparer la distance entre deux utilisateurs sur la base des notes attribuées aux lieux touristiques.
+**Explication** : Cette requête calcule la similarité de Jaccard entre les zones distinctes visitées par les deux utilisateurs français les plus actifs.
 
 **Capture d'écran des résultats** :
-- ![Capture d'écran](path_to_screenshot)
+- ![Capture d'écran](path_to_screenshot_2.1.2)
 
 ---
 
-1.3 **Comparaison des résultats Jaccard et Euclidean :**
+### 2.1.3 Similarité pour les deux utilisateurs français ayant visité le plus de zones distinctes
 
-Les résultats montrent des différences significatives entre ces mesures. La similarité Jaccard se concentre uniquement sur les lieux en commun, tandis que les similarités Euclidienne et cosinus tiennent compte des valeurs de notes, ce qui explique les écarts observés.
+```cypher
+// Requête pour trouver et calculer la similarité pour les deux utilisateurs avec le plus de zones distinctes
+```
+
+**Explication** : Cette requête identifie les deux utilisateurs français ayant visité le plus de zones distinctes et calcule leur similarité.
 
 **Capture d'écran des résultats** :
-- ![Capture d'écran](path_to_screenshot)
+- ![Capture d'écran](path_to_screenshot_2.1.3)
 
 ---
 
-## 2. Link Prediction
+### 2.1.4 Explication des différences
 
-2.1 **Nombre de voisins communs entre les utilisateurs français ayant le plus commenté :**
-
-```plaintext
-// Requête pour calculer le nombre de voisins communs.
-```
-
-- **Explication** : Cette mesure permet de prédire si deux utilisateurs seront connectés dans le futur, basé sur leurs voisins communs.
-
-**Capture d'écran des résultats** :
-- ![Capture d'écran](path_to_screenshot)
+Les différences observées entre les résultats des sections 2.1.2 et 2.1.3 peuvent s'expliquer par...
 
 ---
 
-2.2 **Utilisation de l'Attachement Préférentiel, de l'Allocation de Ressources, et d'Adamic-Adar pour la prédiction de liens :**
+### 2.1.5 Chevauchement (Overlap) et comparaison avec Jaccard
 
-```plaintext
-// Requêtes pour l'attachement préférentiel, allocation de ressources, Adamic-Adar.
+```cypher
+// Requête pour calculer le chevauchement
 ```
 
-- **Explication** : Ces algorithmes permettent de prédire de nouveaux liens potentiels entre les utilisateurs. Adamic-Adar favorise les liens avec des voisins communs rares, ce qui pourrait indiquer des recommandations plus précises.
+**Explication** : Le chevauchement diffère de la similarité de Jaccard en ce que...
 
-**Schéma explicatif des algorithmes** :
-- ![Schéma explicatif](path_to_schema)
+---
+
+### 2.1.6 Similarités Euclidienne et Cosinus basées sur le nombre de commentaires (NB)
+
+```cypher
+// Requêtes pour les similarités Euclidienne et Cosinus basées sur NB
+```
+
+**Explication** : Ces mesures diffèrent des précédentes car...
+
+---
+
+### 2.1.7 Similarités basées sur les notes
+
+```cypher
+// Requêtes pour les similarités basées sur les notes
+```
+
+**Explication** : L'utilisation des notes plutôt que du nombre de commentaires change les résultats car...
+
+---
+
+### 2.1.8 Similarités pour les zones en commun uniquement
+
+```cypher
+// Requêtes pour les similarités sur les zones communes
+```
+
+**Explication** : En se concentrant uniquement sur les zones communes, nous observons que...
+
+---
+
+### 2.1.9 Similarités moyennes pour les utilisateurs espagnols
+
+```cypher
+// Requête pour calculer les similarités moyennes pour les Espagnols
+```
+
+**Explication** : Cette analyse se concentre sur les utilisateurs espagnols ayant visité au moins 5 lieux par zone.
+
+---
+
+### 2.1.10 Comparaison avec les utilisateurs britanniques, américains et italiens
+
+```cypher
+// Requêtes pour les similarités des autres nationalités
+```
+
+**Explication** : Les différences observées entre ces nationalités peuvent s'expliquer par...
+
+---
+
+## 2.2 Link Prediction
+
+### 2.2.1 Nombre de voisins communs entre les deux Français les plus actifs
+
+```cypher
+// Requête pour calculer le nombre de voisins communs
+```
+
+**Explication** : Cette mesure est importante pour la prédiction de liens car...
+
+---
+
+### 2.2.2 Prédiction de liens avec différentes méthodes
+
+```cypher
+// Requêtes pour les différentes méthodes de prédiction de liens
+```
+
+**Explication** : Chaque méthode (voisins totaux, attachement préférentiel, allocation de ressources, Adamic-Adar) a ses particularités...
+
+---
+
+### 2.2.3 Explication des différences entre les méthodes
+
+Les différences observées entre ces méthodes de prédiction de liens s'expliquent par...
+
+---
+
+### 2.2.4 Top 10 des voisins partagés entre les 10 meilleurs commentateurs espagnols
+
+```cypher
+// Requête pour le top 10 des voisins partagés
+```
+
+**Explication** : Cette analyse nous permet de comprendre...
+
+---
+
+### 2.2.5 Discussion des résultats basée sur les voisins communs
+
+En examinant les voisins communs, nous pouvons conclure que...
 
 ---
 
 ## Conclusion
 
-Les résultats obtenus montrent des différences importantes dans les métriques de similarité et les techniques de prédiction de liens. La similarité Jaccard est pertinente pour les comparaisons globales, tandis que les méthodes d'Euclidean et cosinus permettent une approche plus fine basée sur les notes. Les prédictions de liens basées sur Adamic-Adar semblent être les plus efficaces pour les utilisateurs ayant des voisins communs rares.
-
+Ce rapport a exploré diverses mesures de similarité et méthodes de prédiction de liens dans le contexte d'un graphe biparti d'utilisateurs et de lieux touristiques. Les principales conclusions sont...
