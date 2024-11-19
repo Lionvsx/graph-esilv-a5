@@ -1,15 +1,38 @@
-version: "3"
-
+version: '3'
 services:
-  neo4j:
+  neo4j-mono-partite:
     image: neo4j:latest
+    container_name: neo4j-mono-partite
     ports:
-      - "7474:7474" # HTTP
-      - "7687:7687" # Bolt
-    environment:
-      - NEO4J_AUTH=neo4j/yourpassword
+      - "7474:7474"
+      - "7687:7687"
     volumes:
-      - ./neo4j/data:/data
-      - ./neo4j/logs:/logs
-      - ./neo4j/import:/var/lib/neo4j/import
+      - ./neo4j/data/mono-partite:/data
+      - ./neo4j/logs/mono-partite:/logs
+      - ./neo4j/import/mono-partite:/var/lib/neo4j/import
       - ./neo4j/plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_PLUGINS='["neo4j-graph-data-science-2.10.1.jar"]'
+    config:
+      - dbms.memory.heap.initial_size=1G
+      - dbms.memory.heap.max_size=6G
+
+  neo4j-bi-partite:
+    image: neo4j:latest
+    container_name: neo4j-bi-partite
+    ports:
+      - "7475:7474"
+      - "7688:7687"
+    volumes:
+      - ./neo4j/data/bi-partite:/data
+      - ./neo4j/logs/bi-partite:/logs
+      - ./neo4j/import/bi-partite:/var/lib/neo4j/import
+      - ./neo4j/plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_PLUGINS='["neo4j-graph-data-science-2.10.1.jar"]'
+    config:
+      - dbms.memory.heap.initial_size=1G
+      - dbms.memory.heap.max_size=6G
+
