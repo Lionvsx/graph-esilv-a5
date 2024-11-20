@@ -1490,6 +1490,7 @@ LIMIT 10;
 | 57034   | Lyon, 2e arrondissement    | Rhône               | Auvergne-Rhône-Alpes        | France  | 90,625        |
 
 ## 3.2.2
+### France 2019
 
 ```cypher=
 CALL gds.triangleCount.stream(
@@ -1524,6 +1525,7 @@ LIMIT 10;
 | Haute-Savoie        | Auvergne-Rhône-Alpes        | France  | 407,339              |
 | Calvados            | Normandie                   | France  | 368,772              |
 
+### France 2020
 
 ```cypher=
 CALL gds.triangleCount.stream(
@@ -1559,7 +1561,8 @@ LIMIT 10;
 | Rhône               | Auvergne-Rhône-Alpes        | France  | 496,466              |
 | Calvados            | Normandie                   | France  | 458,170              |
 
-### 3.2.3
+## 3.2.3
+### France 2019
 
 ```cypher=
 CALL gds.localClusteringCoefficient.stream('French2019', {
@@ -1592,6 +1595,8 @@ LIMIT 10;
 | Alpes-de-Haute-Provence    | Provence-Alpes-Côte d'Azur  | France  | 0.3881                          |
 | Essonne                    | Île-de-France               | France  | 0.3880                          |
 
+### France 2020
+
 ```cypher=
 CALL gds.localClusteringCoefficient.stream('French2020', {
   relationshipTypes: ['trip_undirected']
@@ -1623,7 +1628,8 @@ LIMIT 10;
 | Hautes-Alpes        | Provence-Alpes-Côte d'Azur  | France  | 0.4005                          |
 | Ille-et-Vilaine     | Bretagne                    | France  | 0.4001                          |
 
-### 3.2.4
+## 3.2.4
+### France 2019
 
 ```cypher=
 CALL gds.graph.create.cypher(
@@ -1665,8 +1671,11 @@ ORDER BY communityId, nodeCount DESC;
 | Bouches-du-Rhône      | Provence-Alpes-Côte d'Azur | France  | 251          | 51         |
 | Pyrénées-Atlantiques  | Nouvelle-Aquitaine         | France  | 251          | 51         |
 | Côtes-d'Armor         | Bretagne                   | France  | 251          | 50         |
+### France 2020
 
-### 3.2.5
+
+## 3.2.5
+### France 2019
 
 ```cypher=
 CALL gds.labelPropagation.stream('French2019_LabelPropagation')
@@ -1696,8 +1705,11 @@ LIMIT 10;
 | Ardennes                  | 3637         | 1          |
 | Ardèche                   | 251          | 34         |
 
+### France 2020
 
-### 3.2.6
+
+## 3.2.6
+### France 2019
 
 ```cypher=
 CALL gds.louvain.stream('French2019_LabelPropagation')
@@ -1731,8 +1743,10 @@ LIMIT 10;
 | Charente                  | Nouvelle-Aquitaine          | France  | 251          | 32         |
 | Charente-Maritime         | Nouvelle-Aquitaine          | France  | 251          | 47         |
 
+### France 2020
 
-### 3.2.7
+## 3.2.7
+### France 2019
 
 ```cypher=
 CALL gds.louvain.stream('French2019_LabelPropagation')
@@ -1758,3 +1772,5 @@ LIMIT 10;
 | 364          | 1                     | 1          |
 | 1788         | 1                     | 1          |
 | 2624         | 1                     | 1          |
+
+### France 2020
