@@ -1,19 +1,3 @@
-// Use GDS to create a graph projection
-CALL gds.graph.project(
-  'reviewGraph',
-  ['User', 'Area_4'],
-  {
-    review: {
-      type: 'review',
-      properties: ['NB', 'rating']
-    }
-  }
-)
-
-// Function to calculate Euclidean distance
-WITH gds.similarity.euclidean() AS euclideanDistance,
-     gds.similarity.cosine() AS cosineSimilarity
-
 // For top reviewers by total reviews
 MATCH (u:User {country: 'France'})-[r:review]->(a:Area_4)
 WITH u, SUM(r.NB) AS totalReviews
@@ -23,30 +7,29 @@ WITH COLLECT(u) AS topUsers
 
 MATCH (u1:User) WHERE u1 IN topUsers
 MATCH (u2:User) WHERE u2 IN topUsers AND u1.id < u2.id
-CALL gds.similarity.euclidean.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'NB'
-})
-YIELD similarity AS euclideanDistanceNB
-CALL gds.similarity.cosine.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'NB'
-})
-YIELD similarity AS cosineSimilarityNB
-CALL gds.similarity.euclidean.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'rating'
-})
-YIELD similarity AS euclideanDistanceRating
-CALL gds.similarity.cosine.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'rating'
-})
-YIELD similarity AS cosineSimilarityRating
+MATCH (u1)-[r1:review]->(a:Area_4)<-[r2:review]-(u2)
+WITH u1, u2, 
+     COLLECT({areaId: a.gid, NB: toFloat(r1.NB), rating: toFloat(r1.rating)}) AS commonReviews1,
+     COLLECT({areaId: a.gid, NB: toFloat(r2.NB), rating: toFloat(r2.rating)}) AS commonReviews2
+
+WITH u1, u2, commonReviews1, commonReviews2,
+     gds.similarity.euclidean(
+       [x IN commonReviews1 | x.NB],
+       [y IN commonReviews2 | y.NB]
+     ) AS euclideanDistanceNB,
+     gds.similarity.cosine(
+       [x IN commonReviews1 | x.NB],
+       [y IN commonReviews2 | y.NB]
+     ) AS cosineSimilarityNB,
+     gds.similarity.euclidean(
+       [x IN commonReviews1 | x.rating],
+       [y IN commonReviews2 | y.rating]
+     ) AS euclideanDistanceRating,
+     gds.similarity.cosine(
+       [x IN commonReviews1 | x.rating],
+       [y IN commonReviews2 | y.rating]
+     ) AS cosineSimilarityRating
+
 RETURN u1.id AS user1Id, u2.id AS user2Id,
        euclideanDistanceNB, cosineSimilarityNB,
        euclideanDistanceRating, cosineSimilarityRating
@@ -62,33 +45,29 @@ WITH COLLECT(u) AS topUsers
 
 MATCH (u1:User) WHERE u1 IN topUsers
 MATCH (u2:User) WHERE u2 IN topUsers AND u1.id < u2.id
-CALL gds.similarity.euclidean.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'NB'
-})
-YIELD similarity AS euclideanDistanceNB
-CALL gds.similarity.cosine.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'NB'
-})
-YIELD similarity AS cosineSimilarityNB
-CALL gds.similarity.euclidean.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'rating'
-})
-YIELD similarity AS euclideanDistanceRating
-CALL gds.similarity.cosine.stream('reviewGraph', {
-  sourceNodeFilter: u1.id,
-  targetNodeFilter: u2.id,
-  relationshipWeightProperty: 'rating'
-})
-YIELD similarity AS cosineSimilarityRating
+MATCH (u1)-[r1:review]->(a:Area_4)<-[r2:review]-(u2)
+WITH u1, u2, 
+     COLLECT({areaId: a.gid, NB: toFloat(r1.NB), rating: toFloat(r1.rating)}) AS commonReviews1,
+     COLLECT({areaId: a.gid, NB: toFloat(r2.NB), rating: toFloat(r2.rating)}) AS commonReviews2
+
+WITH u1, u2, commonReviews1, commonReviews2,
+     gds.similarity.euclidean(
+       [x IN commonReviews1 | x.NB],
+       [y IN commonReviews2 | y.NB]
+     ) AS euclideanDistanceNB,
+     gds.similarity.cosine(
+       [x IN commonReviews1 | x.NB],
+       [y IN commonReviews2 | y.NB]
+     ) AS cosineSimilarityNB,
+     gds.similarity.euclidean(
+       [x IN commonReviews1 | x.rating],
+       [y IN commonReviews2 | y.rating]
+     ) AS euclideanDistanceRating,
+     gds.similarity.cosine(
+       [x IN commonReviews1 | x.rating],
+       [y IN commonReviews2 | y.rating]
+     ) AS cosineSimilarityRating
+
 RETURN u1.id AS user1Id, u2.id AS user2Id,
        euclideanDistanceNB, cosineSimilarityNB,
        euclideanDistanceRating, cosineSimilarityRating
-
-// Drop the graph projection
-CALL gds.graph.drop('reviewGraph')

@@ -1,8 +1,6 @@
 // Find top French reviewers by total reviews and distinct areas
-MATCH (u:User {country: 'France'})
-WITH u, 
-     SIZE([(u)-[:review]->() | 1]) AS totalReviews,
-     SIZE([(u)-[:review]->(:Area_4) | 1]) AS distinctAreas
+MATCH (u:User {country: 'France'})-[r:review]->(a:Area_4)
+WITH u, SUM(r.NB) AS totalReviews, COUNT(DISTINCT a) AS distinctAreas
 WITH u, totalReviews, distinctAreas
 ORDER BY totalReviews DESC, distinctAreas DESC
 LIMIT 4
@@ -14,28 +12,16 @@ WITH topReviewers[0].user AS topTotalUser1,
      topReviewers[2].user AS topDistinctUser1,
      topReviewers[3].user AS topDistinctUser2
 
-// Calculate similarities for total reviews pair
-MATCH (topTotalUser1)-[r1:review]->(a:Area_4)<-[r2:review]-(topTotalUser2)
-WITH topTotalUser1, topTotalUser2, topDistinctUser1, topDistinctUser2,
-     COLLECT({rating1: toFloat(r1.rating), rating2: toFloat(r2.rating)}) AS totalCommonReviews
+// Calculate similarities for both pairs
+UNWIND [
+  {type: 'Total Reviews', u1: topTotalUser1.id, u2: topTotalUser2.id},
+  {type: 'Distinct Areas', u1: topDistinctUser1.id, u2: topDistinctUser2.id}
+] AS pair
+MATCH (u1:User {id: pair.u1})-[r1:review]->(a:Area_4)<-[r2:review]-(u2:User {id: pair.u2})
+WITH pair, COLLECT({rating1: toFloat(r1.rating), rating2: toFloat(r2.rating)}) AS commonReviews
 
-// Calculate similarities for distinct areas pair
-MATCH (topDistinctUser1)-[r1:review]->(a:Area_4)<-[r2:review]-(topDistinctUser2)
-WITH topTotalUser1, topTotalUser2, topDistinctUser1, topDistinctUser2,
-     totalCommonReviews,
-     COLLECT({rating1: toFloat(r1.rating), rating2: toFloat(r2.rating)}) AS distinctCommonReviews
-
-// Calculate Euclidean distance and Cosine similarity for both pairs
-WITH ['Total Reviews', 'Distinct Areas'] AS pairTypes,
-     [totalCommonReviews, distinctCommonReviews] AS commonReviewsList,
-     [topTotalUser1, topDistinctUser1] AS user1List,
-     [topTotalUser2, topDistinctUser2] AS user2List
-UNWIND RANGE(0, 1) AS i
-WITH pairTypes[i] AS pairType,
-     commonReviewsList[i] AS commonReviews,
-     user1List[i] AS u1,
-     user2List[i] AS u2
-WITH pairType, u1, u2, commonReviews,
+// Calculate Euclidean distance and Cosine similarity
+WITH pair, commonReviews,
      SQRT(REDUCE(s = 0.0, r IN commonReviews | s + (r.rating1 - r.rating2)^2)) AS euclideanDistance,
      CASE SIZE(commonReviews)
        WHEN 0 THEN null
@@ -46,9 +32,10 @@ WITH pairType, u1, u2, commonReviews,
 
 // Return results
 RETURN 
-  pairType AS userPair,
-  u1.id AS user1Id, 
-  u2.id AS user2Id,
+  pair.type AS userPair,
+  pair.u1 AS user1Id, 
+  pair.u2 AS user2Id,
   euclideanDistance,
   cosineSimilarity,
   SIZE(commonReviews) AS commonReviewsCount
+ORDER BY userPair
